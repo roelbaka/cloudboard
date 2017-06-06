@@ -5,6 +5,7 @@ cache: yarn
 script:
   - npm test
   - npm run build
+  - echo $ADMIN_TOKEN > ADMIN_TOKEN
 deploy:
   provider: heroku
   app: cloudboard-app

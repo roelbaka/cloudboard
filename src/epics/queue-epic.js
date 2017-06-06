@@ -16,7 +16,7 @@ import socket from '../socket'
 
 export default function queueEpic(action$, { getState }) {
   const serverAction$ = serverSource()
-    .filter(event => event.board === getState().board)
+    .filter(event => event.board === getState().board || event.admin)
     .map(({ id, collection, sound }) => play(id, collection, sound))
 
   return action$
@@ -46,7 +46,13 @@ export default function queueEpic(action$, { getState }) {
 
 function broadcastSound({ board }, action, id) {
   const { collection, sound } = action
+  const adminToken = Modernizr.localstorage && localStorage.getItem('adminToken')
   const { event, data } = serverQueue(id, board, collection, sound)
+
+  if (adminToken) {
+    data.adminToken = adminToken
+  }
+
   socket.emit(event, data)
 }
 
